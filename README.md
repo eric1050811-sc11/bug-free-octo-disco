@@ -9,8 +9,8 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
 ## Rules
 
 * 2 to 4 players
-* Players move on a 12 by 12 grid
-* Players start at the four corners
+* Players move on a 12 by 12 grid.
+* Players start at the four corners.
 * In each round, players take turns to decide which direction they're going to move in, they have 5 second to make a decision. In each round, the player can only move one step. **Note that players can't move back to their previous positions, including their own and others**.
 * When there are any player on the current player's cross (row or column), current player can decide whether to attack or keep moving. When the player decides to attack, it will generate a random number to decide whether the attack is successful or not.
 * If the attack fails, the other player survives, but the current player is guaranteed that next attack will be 100% successful.
