@@ -11,8 +11,9 @@ let out_player = [];
 let round = 1;
 let sec = 5;
 let mainInterval;
+let timerInterval;
 let promised = [0, 0, 0, 0, 0];
-let cant_move = [0, 0, 0, 0, 0];
+let cant_move = [];
 
 // initialize grid
 for (let i = 0; i < BOARD_SIZE; i++) {
@@ -75,8 +76,9 @@ function draw_control_area() {
 
 function get_num_of_player() {
     let num = $("#num_of_player").val();
-    console.log(num);
-    $("div.init_input").fadeOut(500);
+    $("#init_input").fadeOut(500);
+    $("#init_msg").fadeOut(500);
+    $("#fog").fadeOut(500);
     return Number(num);
 }
 
@@ -100,7 +102,7 @@ function draw_player(x, y, player_id) {
     // if promised, border bolder
     if (promised[player_id]) {
         playerDiv.css({
-            "border-width": "10px",
+            "border-width": "5px",
             "border-style": "solid",
             "border-color": "white"
         });
@@ -164,6 +166,9 @@ function move_player(x, y, nx, ny, player_id) {
     $("#player" + player_id).fadeIn(500);
     disable_controls();
     setTimeout(next_round, 100);
+
+    let msg = "Player " + player_id + " move from (" + x + ", " + y + ") to (" + nx + ", " + ny + ").<br>";
+    update_action_log(msg);
 }
 
 function disable_controls() {
@@ -173,7 +178,7 @@ function disable_controls() {
 }
 
 function indicate(x, y) {
-    // indicate the move position
+    // indicate the possible moving position
     $("#block_" + y + "_" + x).html("<div class=\"indicator\"></div>");
 }
 
@@ -188,7 +193,6 @@ function enable_controls(player_id) {
         cnt++;
         $("#ctrl_up").attr("disabled", false);
         $("#ctrl_up").click(function() {move_player(xx, yy, xx, yy - 1, player_id)});
-        console.log("block_" + (yy - 1) + "_" + xx);
         $("#block_" + (yy - 1) + "_" + xx).click(function() {move_player(xx, yy, xx, yy - 1, player_id)});
         indicate(xx, yy - 1);
     }
@@ -215,7 +219,10 @@ function enable_controls(player_id) {
     }
     // check if player can't move or not
     if (!cnt) {
-        cant_move[player_id] = 1;
+        if (!cant_move.includes(player_id)) {
+            cant_move.push(player_id)
+        }
+        // console.log(player_id + "cant move");
     }
 
     // check if attack
@@ -235,14 +242,20 @@ function enable_controls(player_id) {
     // update attack button
     if (atk_enable) {
         $("#ctrl_atk").attr("disabled", false).click(function() {attack(player_id, online_ene)});
-        console.log(online_ene);
+        return atk_enable;
     }
 }
 
 function next_round() {
+    // console.log(is_game_over());
     // check if game over first
-    if (is_game_over()) {
+    let game_status = is_game_over();
+    if (game_status == 1) {
         declare_winner();
+        return;
+    }
+    else if (game_status == 2) {
+        no_one_can_move();
         return;
     }
 
@@ -257,6 +270,7 @@ function next_round() {
     // reset timer
     sec = 5;
     $("#5sec_timer").html(sec);
+    draw_timer(sec, COLOR[round]);
     // start a five second round
     a_round(round);
 }
@@ -266,6 +280,22 @@ function a_round(player_id) {
     if (out_player.includes(player_id)) {
         next_round();
         return;
+    }
+
+    // check current player still can move
+    if (cant_move.includes(player_id)) {
+        let msg = "Player " + player_id + " can't make any move.<br>";
+        update_action_log(msg);
+
+        if (enable_controls(player_id)) {
+            console.log("cant move but can attack");
+            let msg = "But player " + player_id + " has a chance to attack.<br>";
+            update_action_log(msg);
+        }
+        else {
+            next_round();
+            return;
+        }
     }
 
     // change the border color
@@ -280,9 +310,13 @@ function a_round(player_id) {
         // update timer
         sec--;
         $("#5sec_timer").html(sec);
+        draw_timer(sec, COLOR[player_id]);
         // check if 5 second is up
         if (sec <= 0) {
             next_round();
+
+            let msg = "Player " + player_id + " 5 second timeout.<br>";
+            update_action_log(msg);
         }
     }, 1000);
 }
@@ -306,12 +340,19 @@ function attack(player_id, online_ene) {
         // border become normal
         erase_player(player_pos[player_id][0], player_pos[player_id][1]);
         draw_player(player_pos[player_id][0], player_pos[player_id][1], player_id);
+
+        let msg = "Player " + player_id + " attack successfully. ";
+        msg += ("Player " + online_ene + " died.<br>")
+        update_action_log(msg);
     } else {
         // border bolder and set promised
-        $("#player" + player_id).css("border-width", "10px");
+        $("#player" + player_id).css("border-width", "5px");
         $("#player" + player_id).css("border-style", "solid");
         $("#player" + player_id).css("border-color", "white");
         promised[player_id] = 1;
+
+        let msg = "Player " + player_id + " attack failed, he is promised.<br>";
+        update_action_log(msg);
     }
 
     disable_controls();
@@ -328,6 +369,7 @@ function game_start() {
     round = 1;
     sec = 5;
     $("#5sec_timer").html(sec);
+    draw_timer(sec, COLOR[round]);
 
     if (out_player.includes(round)) {
         next_round();
@@ -340,7 +382,9 @@ function game_start() {
 
 function is_game_over() {
     // check if one player still alive
-    return out_player.length == player_num - 1;
+    if (out_player.length == player_num - 1) return 1;
+    else if (cant_move.length == (player_num - out_player.length)) return 2;
+    else return 0;
 }
 
 function declare_winner() {
@@ -352,10 +396,48 @@ function declare_winner() {
             break;
         }
     }
-    alert("Game Over! Player " + winner + " wins!");
+
+    let msg = "Player" + winner + " wins the game.";
+    update_action_log(msg);
+
     console.log("Game Over! Player " + winner + " wins!");
 
+    let btn_str = "<br><button id=\"play_again\">Play Again</button>"
+    $("#game_over_msg").html(msg + btn_str);
+    $("#fog").fadeIn(500);
+    $("#game_over_msg").fadeIn(500);
+
     clearInterval(mainInterval);
+    clearInterval(timerInterval);
+
+    $("#play_again").click(function() {
+        location.reload();
+    });
+}
+
+function no_one_can_move() {
+    let msg = "No one can move anymore, game over.";
+    update_action_log(msg);
+    
+    // alert("No one can move anymore, game over.");
+    console.log("No one can move anymore, game over.");
+    let btn_str = "<br><button id=\"play_again\">Play Again</button>"
+    
+    $("#game_over_msg").html(msg + btn_str);
+    $("#fog").fadeIn(500);
+    $("#game_over_msg").fadeIn(500);
+
+    clearInterval(mainInterval);
+    clearInterval(timerInterval);
+
+    $("#play_again").click(function() {
+        location.reload();
+    });
+}
+
+function update_action_log(str) {
+    let old_str = $("#action_log").html();
+    $("#action_log").html(old_str + str);
 }
 
 $(document).ready(function(){
@@ -363,16 +445,52 @@ $(document).ready(function(){
     draw_main_game_area();
     draw_control_area();
     $("#init_input").fadeIn(500);
+    $("#init_msg").fadeIn(500);
+    $("#fog").fadeIn(500);
+    disable_controls();
 
-    // # player keep going
+    // # player select
     $(".num_player").click(function() {
-        console.log("click");
         $(".num_player").not(this).removeClass("btn_active");
         $(this).addClass("btn_active");
+        let numPlayerValue = $(this).attr('id');
+        $("#num_of_player").val(Number(numPlayerValue));
+    });
+
+    // game mode select
+    $(".game_mode").click(function() {
+        $(".game_mode").not(this).removeClass("btn_active");
+        $(this).addClass("btn_active");
+        let game_mode = $(this).attr('id');
     });
 
     // wait input and start
-    $("#Start").click(function() {
+    $("#start").click(function() {
         game_start();
+        // action log update
+        let str = $("#action_log").html();
+        let new_str = "Game start!<br>";
+        $("#action_log").html(str + new_str);
     });
 });
+
+function draw_timer(sec, color) {
+    sec = Number(sec);
+    clearInterval(timerInterval);
+    timerInterval = setInterval(function() {
+        let canvas = document.getElementById("5_sec_timer");
+        let ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2 - 5, Math.PI * 1.5, 2 * Math.PI / 5 * sec + Math.PI * 1.5);
+        ctx.lineTo(canvas.width / 2, canvas.height / 2);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.font = "20px Arial";
+        let rs = Math.round(sec * 10) / 10;
+        ctx.fillText(rs, 20, 20);
+        ctx.stroke();
+        sec -= 0.2;
+    }, 200);
+};

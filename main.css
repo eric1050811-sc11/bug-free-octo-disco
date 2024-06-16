@@ -6,22 +6,50 @@ h1 {
     text-align: center;
 }
 
-button.num_player {
-    /* background-color: white; */
-}
-
-.btn_active {
-    background-color: blue;
-}
-
-div.flex_container {
+div.flex_horizontal_container {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    /* align-items: stretch; */
+}
+
+div.spacer {
+    flex: auto;
+}
+
+div.flex_vertical_container {
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+div#fog {
+    position: fixed;
+    width: 120%;
+    height: 120%;
+    left: -5%;
+    top: -5%;
+    background-color: whitesmoke;
+    opacity: 50%;
+}
+
+div.action_log {
+    background-color: white;
+    border-style: solid;
+    border-width: 5px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    width: 30em;
+    height: 20em;
+    margin: 0 auto;
 }
 
 div.main_game_area {
-    /* margin: auto; */
+    flex: 0 1 auto;
+    margin: auto;
     border-style: solid;
     border-width: 10px;
     border-color: gray;
@@ -49,14 +77,38 @@ div.init_input {
     position: fixed;
     width: 30%;
     height: 30%;
-    bottom: 35%;
+    bottom: 50%;
     right: 35%; 
     padding: 1em;
     text-align: center;
     margin: 1em auto;
     background-color: aquamarine;
     border-radius: 1em;
+    border-style: solid;
+    border-width: 5px;
+    border-color: darkgreen;
     font-size: larger;
+}
+
+div.init_msg, div.game_over_msg {
+    position: fixed;
+    width: 30%;
+    height: 30%;
+    bottom: 10%;
+    right: 35%; 
+    padding: 1em;
+    text-align: left;
+    margin: 1em auto;
+    background-color: aquamarine;
+    border-radius: 1em;
+    border-style: solid;
+    border-width: 5px;
+    border-color: darkgreen;
+    font-size: larger;
+}
+
+div.init_msg {
+    overflow: auto;
 }
 
 div.player {
@@ -89,4 +141,42 @@ button.ctrl {
     width: 3em;
     height: 3em;
     /* background-color: aquamarine; */
+}
+
+button.num_player, button.game_mode{
+    width: 80%;
+    height: 80%;
+}
+
+button#start {
+    width: 50%;
+    height: 20%;
+    margin: auto;
+}
+
+button#play_again {
+    width: 50%;
+    height: 40%;
+    margin: 5% auto;
+}
+
+.btn_active {
+    background-color: rgb(163, 179, 196);
+}
+
+table#init_input_table {
+    width: 90%;
+    height: 60%;
+    margin: 0 auto;
+    /* border-style: solid;
+    border-width: 5px; */
+    border-collapse: separate;
+    table-layout: fixed;
+}
+
+div.game_over_msg {
+    height: 15%;
+    bottom: 50%;
+    text-align: center;
+    font-size: xx-large;
 }

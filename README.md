@@ -55,6 +55,7 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
    * Capture the flag: first one get to the flag wins
    * Mark the land: one with the biggest area marked wins
 7. Code optimization
+8. Game Pause
 
 ## Thought on this Project
 
