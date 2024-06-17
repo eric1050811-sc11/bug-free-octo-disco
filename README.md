@@ -49,13 +49,13 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
 2. Obstacles
 3. Visual effect
 4. Sound effect
-5. Action log
+5. Action log (done)
 6. More game modes
    * Survival mode: last one standing wins
    * Capture the flag: first one get to the flag wins
    * Mark the land: one with the biggest area marked wins
 7. Code optimization
-8. Game Pause
+8. Game Pause (done)
 
 ## Thought on this Project
 

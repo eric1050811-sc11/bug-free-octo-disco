@@ -5,6 +5,9 @@
         <title>Bug-Free-Octo-Disco</title>
         <link rel="stylesheet" type="text/css" href="main.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
     </head>
     <body>
         <div id="fog" hidden></div>
@@ -13,12 +16,18 @@
             <div class="spacer"></div>
             <div class="main_game_area" id="main_game_area"></div>
             <div class="spacer"></div>
-            <div class="flex_vertical_container">
+            <div class="flex_vertical_container" id="right_side_area">
                 <div class="action_log" id="action_log"></div>
                 <div class="flex_horizontal_container">
-                    <div class="control_area" id="control_area"></div>
+                    <div class="spacer"></div>
+                    <div class="flex_vertical_container">
+                        <div class="control_area" id="control_area"></div>
+                        <button id="pause" disabled>Pause</button>
+                    </div>
+                    <div class="spacer"></div>
                     <div id="5sec_timer" hidden>5</div>
-                    <canvas id="5_sec_timer" width="200" height="200"></canvas>
+                    <canvas id="5_sec_timer" width="250" height="250"></canvas>
+                    <div class="spacer"></div>
                 </div>
             </div>
             <div class="spacer"></div>
@@ -70,7 +79,15 @@
             <br><br><br>
             Game developed by Yi-Jen, Liao. All right reserved.
         </div>
+        <div class="pause_msg" id="pause_msg" hidden>
+            Pause
+            <br>
+            <button id="resume" disabled>Resume</button>
+            <br>
+            <button id="restart" disabled>Restart</button>
+        </div>
         <div class="game_over_msg" id="game_over_msg" hidden>
+            <button id="play_again" disabled>Play Again</button>
         </div>
         <script src="script.js"></script>
     </body>

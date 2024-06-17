@@ -24,7 +24,6 @@ for (let i = 0; i < BOARD_SIZE; i++) {
 
 function draw_main_game_area() {
     let temp = "";
-
     // table declare
     temp += "<table id=\"grid_table\"><tbody>";
     // table body
@@ -37,14 +36,12 @@ function draw_main_game_area() {
         temp += "</tr>";
     }
     temp += "</tbody></table>";
-
     // append to html
     $("#main_game_area").html(temp);
 }
 
 function draw_control_area() {
     let temp = "";
-
     temp += "<table><tbody>";
     let cnt = 0;
     for (let i = 0; i < 3; i++) {
@@ -52,15 +49,15 @@ function draw_control_area() {
         for (let j = 0; j < 3; j++) {
             // up, down, left, right buttons, and some blank buttons
             if (i == 0 && j == 1) {
-                temp += "<td><button class=\"ctrl\" id=\"ctrl_up\">up</button></td>";
+                temp += "<td><button class=\"ctrl\" id=\"ctrl_up\">&#8593;</button></td>";
             } else if (i == 1 && j == 0) {
-                temp += "<td><button class=\"ctrl\" id=\"ctrl_left\">left</button></td>";
+                temp += "<td><button class=\"ctrl\" id=\"ctrl_left\">&#8592;</button></td>";
             } else if (i == 1 && j == 1) {
                 temp += "<td><button class=\"ctrl\" id=\"ctrl_atk\" disabled>atk</button></td>";
             } else if (i == 1 && j == 2) {
-                temp += "<td><button class=\"ctrl\" id=\"ctrl_right\">right</button></td>";
+                temp += "<td><button class=\"ctrl\" id=\"ctrl_right\">&#8594;</button></td>";
             } else if (i == 2 && j == 1) {
-                temp += "<td><button class=\"ctrl\" id=\"ctrl_down\">down</button></td>";
+                temp += "<td><button class=\"ctrl\" id=\"ctrl_down\">&#8595;</button></td>";
             } else {
                 temp += "<td><button class=\"ctrl\" id=\"ctrl_" + cnt + "\"></button></td>";
             }
@@ -70,15 +67,11 @@ function draw_control_area() {
     }
     temp += "</tbody>";
     temp += "</table>";
-
     $("#control_area").html(temp);
 }
 
 function get_num_of_player() {
     let num = $("#num_of_player").val();
-    $("#init_input").fadeOut(500);
-    $("#init_msg").fadeOut(500);
-    $("#fog").fadeOut(500);
     return Number(num);
 }
 
@@ -89,7 +82,7 @@ function draw_player(x, y, player_id) {
     // if player doesn't exist
     if (playerDiv.length == 0) {
         // draw the player onto the grid
-        $("#block_" + y + "_" + x).html("<div class=\"player\" id=\"player" + player_id + "\"></div>");
+        $("#block_" + y + "_" + x).html("<div class=\"player\" id=\"player" + player_id + "\">" + player_id + "</div>");
         // update player
         playerDiv = $("#player" + player_id);
     } else {
@@ -306,6 +299,19 @@ function a_round(player_id) {
 
     // main 5 second interval
     clearInterval(mainInterval);
+    set_mainInterval(player_id);
+}
+
+function set_mainInterval(player_id) {
+    // update timer
+    $("#5sec_timer").html(sec);
+    draw_timer(sec, COLOR[player_id]);
+    // check if 5 second is up
+    if (sec <= 0) {
+        next_round();
+        let msg = "Player " + player_id + " 5 second timeout.<br>";
+        update_action_log(msg);
+    }
     mainInterval = setInterval(function() {
         // update timer
         sec--;
@@ -314,7 +320,6 @@ function a_round(player_id) {
         // check if 5 second is up
         if (sec <= 0) {
             next_round();
-
             let msg = "Player " + player_id + " 5 second timeout.<br>";
             update_action_log(msg);
         }
@@ -346,7 +351,7 @@ function attack(player_id, online_ene) {
         update_action_log(msg);
     } else {
         // border bolder and set promised
-        $("#player" + player_id).css("border-width", "5px");
+        $("#player" + player_id).css("border-width", "0.2em");
         $("#player" + player_id).css("border-style", "solid");
         $("#player" + player_id).css("border-color", "white");
         promised[player_id] = 1;
@@ -362,22 +367,51 @@ function attack(player_id, online_ene) {
 function game_start() {
     // get player number and create player
     player_num = get_num_of_player();
+    $("#init_input").fadeOut(500);
+    $("#init_msg").fadeOut(500);
+    $("#fog").fadeOut(500);
+    
+    $("#main_game_area").animate({marginLeft: "0%"}, 500);
     create_player(player_num);
-    $("#control_area").fadeIn(500);
+    $("#right_side_area").fadeIn(500);
+    $(".spacer").show();
 
     // timer initialize
     round = 1;
     sec = 5;
-    $("#5sec_timer").html(sec);
-    draw_timer(sec, COLOR[round]);
+    draw_timer(sec, COLOR[round], true);
 
-    if (out_player.includes(round)) {
-        next_round();
-        return;
-    }
+    // start a round after a sec
+    setTimeout(function() {
+        update_action_log("Game start!<br>");
+        $("#5sec_timer").html(sec);
+        draw_timer(sec, COLOR[round]);
+        a_round(round);
+        $("#pause").attr("disabled", false);
+    }, 1000);
 
-    // start a round
-    a_round(round);
+    $("#pause").click(function() {
+        $(this).addClass("btn_active");
+        $("#pause_msg").fadeIn(500);
+        $("#fog").fadeIn(500);
+        $("#resume").attr("disabled", false);
+        $("#restart").attr("disabled", false);
+        clearInterval(mainInterval);
+        clearInterval(timerInterval);
+    });
+
+    $("#resume").click(function() {
+        $("#resume").attr("disabled", true);
+        $("#pause_msg").fadeOut(500);
+        $("#fog").fadeOut(500);
+        $("#pause").removeClass("btn_active");
+        $("#restart").attr("disabled", false);
+        set_mainInterval(round);
+    });
+
+    $("#restart").click(function() {
+        location.reload();
+    });
 }
 
 function is_game_over() {
@@ -399,7 +433,6 @@ function declare_winner() {
 
     let msg = "Player" + winner + " wins the game.";
     update_action_log(msg);
-
     console.log("Game Over! Player " + winner + " wins!");
 
     let btn_str = "<br><button id=\"play_again\">Play Again</button>"
@@ -409,6 +442,7 @@ function declare_winner() {
 
     clearInterval(mainInterval);
     clearInterval(timerInterval);
+    $("#play_again").attr("disable", false);
 
     $("#play_again").click(function() {
         location.reload();
@@ -418,17 +452,17 @@ function declare_winner() {
 function no_one_can_move() {
     let msg = "No one can move anymore, game over.";
     update_action_log(msg);
-    
-    // alert("No one can move anymore, game over.");
+
     console.log("No one can move anymore, game over.");
     let btn_str = "<br><button id=\"play_again\">Play Again</button>"
-    
+
     $("#game_over_msg").html(msg + btn_str);
     $("#fog").fadeIn(500);
     $("#game_over_msg").fadeIn(500);
 
     clearInterval(mainInterval);
     clearInterval(timerInterval);
+    $("#play_again").attr("disable", false);
 
     $("#play_again").click(function() {
         location.reload();
@@ -448,6 +482,8 @@ $(document).ready(function(){
     $("#init_msg").fadeIn(500);
     $("#fog").fadeIn(500);
     disable_controls();
+    $("#right_side_area").hide();
+    $(".spacer").hide();
 
     // # player select
     $(".num_player").click(function() {
@@ -467,29 +503,46 @@ $(document).ready(function(){
     // wait input and start
     $("#start").click(function() {
         game_start();
-        // action log update
-        let str = $("#action_log").html();
-        let new_str = "Game start!<br>";
-        $("#action_log").html(str + new_str);
+        update_action_log("Get ready!<br>");
     });
 });
 
-function draw_timer(sec, color) {
+function draw_timer(sec, color, stall = false) {
     sec = Number(sec);
     clearInterval(timerInterval);
-    timerInterval = setInterval(function() {
+    if (stall) {
         let canvas = document.getElementById("5_sec_timer");
-        let ctx = canvas.getContext("2d");
+        let ctx = canvas.getContext("2d"); 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2 - 5, Math.PI * 1.5, 2 * Math.PI / 5 * sec + Math.PI * 1.5);
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height * 0.4 - 5, Math.PI * 1.5, 2 * Math.PI / 5 * sec + Math.PI * 1.5);
         ctx.lineTo(canvas.width / 2, canvas.height / 2);
         ctx.closePath();
         ctx.fillStyle = color;
         ctx.fill();
-        ctx.font = "20px Arial";
+        ctx.font = "bold 20px Arial";
         let rs = Math.round(sec * 10) / 10;
-        ctx.fillText(rs, 20, 20);
+        if ((rs * 10) % 10 == 0) rs += ".0"
+        ctx.fillStyle = "black";
+        ctx.fillText(rs + "s", 0, 22);
+        ctx.stroke();
+        return;
+    }
+    timerInterval = setInterval(function() {
+        let canvas = document.getElementById("5_sec_timer");
+        let ctx = canvas.getContext("2d"); 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height * 0.4 - 5, Math.PI * 1.5, 2 * Math.PI / 5 * sec + Math.PI * 1.5);
+        ctx.lineTo(canvas.width / 2, canvas.height / 2);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.font = "bold 20px Arial";
+        let rs = Math.round(sec * 10) / 10;
+        if ((rs * 10) % 10 == 0) rs += ".0"
+        ctx.fillStyle = "black";
+        ctx.fillText(rs + "s", 0, 22);
         ctx.stroke();
         sec -= 0.2;
     }, 200);
