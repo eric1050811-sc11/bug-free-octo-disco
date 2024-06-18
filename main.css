@@ -21,7 +21,7 @@ div.flex_horizontal_container {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    /* align-items: stretch; */
+    align-items: stretch;
 }
 
 div.spacer {
@@ -164,7 +164,7 @@ td.ctrl_block {
 }
 
 div.control_area > *:first-child {
-    margin: 2em auto;
+    margin: 1em auto;
 }
 
 button.ctrl {
@@ -177,7 +177,7 @@ button.num_player, button.game_mode {
     height: 80%;
 }
 
-button#pause {
+button#pause, button#mute {
     width: 9em;
     height: 3em;
     margin: auto;
@@ -213,6 +213,10 @@ button#play_again {
     background-color: rgb(163, 179, 196);
 }
 
+td.get_flag {
+    border-color: gold;
+}
+
 table#init_input_table {
     width: 90%;
     height: 60%;
@@ -228,4 +232,19 @@ div.game_over_msg {
     bottom: 50%;
     text-align: center;
     font-size: xx-large;
+}
+
+img#flag {
+    width: 100%;
+    height: 100%;
+    padding-top: 7%;
+    padding-left: 2%;
+}
+
+div#me {
+    position: fixed;
+    right: 0%;
+    top: 0%;
+    text-align: right;
+    opacity: 50%;
 }

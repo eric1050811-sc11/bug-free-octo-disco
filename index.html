@@ -3,15 +3,21 @@
     <head>
         <meta charset="utf-8" />
         <title>Bug-Free-Octo-Disco</title>
+        <link rel="shortcut icon" href="#" />
         <link rel="stylesheet" type="text/css" href="main.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet" />
     </head>
     <body>
         <div id="fog" hidden></div>
         <h1>Bug-Free-Octo-Disco</h1>
+        <div id="me">
+            Game developed by Yi-Jen, Liao.
+            <br>
+            All right reserved.
+        </div>
         <div class="flex_horizontal_container">
             <div class="spacer"></div>
             <div class="main_game_area" id="main_game_area"></div>
@@ -23,6 +29,7 @@
                     <div class="flex_vertical_container">
                         <div class="control_area" id="control_area"></div>
                         <button id="pause" disabled>Pause</button>
+                        <button id="mute" disabled>Mute</button>
                     </div>
                     <div class="spacer"></div>
                     <div id="5sec_timer" hidden>5</div>
@@ -51,10 +58,10 @@
                 <tr>
                     <td style="text-align: right;">Mode:</td>
                     <td>
-                        <button class="game_mode btn_active" id="sur">Survive</button>
+                        <button class="game_mode btn_active" id="survive">Survive</button>
                     </td>
                     <td>
-                        <button class="game_mode" id="cap">Cap Flag</button>
+                        <button class="game_mode" id="cap flag">Cap Flag</button>
                     </td>
                     <td>
                         <button class="game_mode" id="area">Area</button>
@@ -75,9 +82,7 @@
             <br>
             &emsp;&emsp;Capture the flag: First player get to the flag wins
             <br>
-            &emsp;&emsp;Mark the land: Player with the biggest area marked wins
-            <br><br><br>
-            Game developed by Yi-Jen, Liao. All right reserved.
+            &emsp;&emsp;Mark the land: Player with the biggest area marked wins            
         </div>
         <div class="pause_msg" id="pause_msg" hidden>
             Pause
@@ -88,6 +93,32 @@
         </div>
         <div class="game_over_msg" id="game_over_msg" hidden>
             <button id="play_again" disabled>Play Again</button>
+        </div>
+        <div id="audio" hidden>
+            <audio id="audio_clock">
+                <source src="audio/clock_a_sec.wav" type="audio/wav">
+            </audio>
+            <audio id="audio_bgm" autoplay loop>
+                <source src="audio/bgm.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="audio_move">
+                <source src="audio/move.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="audio_atk">
+                <source src="audio/atk.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="audio_atk_fail">
+                <source src="audio/atk_fail.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="audio_win">
+                <source src="audio/win.wav" type="audio/wav">
+            </audio>
+            <audio id="audio_gameover">
+                <source src="audio/gameover.wav" type="audio/wav">
+            </audio>
+            <audio id="audio_go">
+                <source src="audio/go.wav" type="audio/wav">
+            </audio>
         </div>
         <script src="script.js"></script>
     </body>

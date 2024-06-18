@@ -48,15 +48,32 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
 1. Power-ups
 2. Obstacles
 3. Visual effect
-4. Sound effect
+4. Sound effect (done)
 5. Action log (done)
 6. More game modes
-   * Survival mode: last one standing wins
-   * Capture the flag: first one get to the flag wins
-   * Mark the land: one with the biggest area marked wins
+   * Survival mode: last one standing wins (done)
+   * Capture the flag: first one get to the flag wins (done)
+   * Mark the land: one with the biggest area marked wins (done)
 7. Code optimization
 8. Game Pause (done)
 
 ## Thought on this Project
 
 我覺得這個 final project 蠻有趣的，從零開始設計遊戲，完程設計之後的 Coding 也蠻有挑戰性的，還有設計前端真的是一大挑戰(對我沒有設計感的人來說)。
+
+## Credit
+
+### image:
+
+flag: https://www.flaticon.com/free-icon/flag_9709603  
+
+### audio: 
+
+clock sound: https://sc.chinaz.com/yinxiao/180924548891.htm  
+background music: https://kenkenbgm.blogspot.com/2023/11/bgmbgmroyalty-free-music316first-day.html  
+move: https://taira-komori.jpn.org/game01tw.html jump09  
+attack: https://taira-komori.jpn.org/human01tw.html fart1  
+attack fail: https://taira-komori.jpn.org/human01tw.html gasp1  
+win: https://sc.chinaz.com/yinxiao/150720069662.htm  
+gogogo: https://sc.chinaz.com/yinxiao/120713546050.htm  
+gameover: https://sc.chinaz.com/yinxiao/200724077310.htm  
