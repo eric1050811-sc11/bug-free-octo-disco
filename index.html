@@ -72,17 +72,27 @@
             <button id="start">Start</button>
         </div>
         <div class="init_msg" id="init_msg" hidden>
-            About this game:
+            ## Basic rules <br>
+            * Players move on a 12 by 12 grid, start at four corners. <br>
+            * In each round, players have 5 second to move a step or attack. Players can't move back to their previous positions. <br>
+            * Any player on current player's row or column, current player can decide to attack or keep moving. <br>
+            * When the player decides to attack, there is a probability that the attack will fail. <br>
+            * If the attack fails, the other players survive, but the current player is guaranteed that next attack will be 100% successful. <br>
+            * If the player can't move, his round will be skipped, but he can still attack if any enemy stands on his cross. <br>
+            * After players take 20 rounds, the grid will start to generate obstacles (black boxes), one in a round. <br>
+            * The game ends when there is only one player still alive, the flag has been captured or no one can make a move. <br>
             <br>
-            A simple board game, also the final project of the JavaScript Classes. I haven't thought of a cool name for this game yet, so now I'm using the default random repository name for now.
-            <br><br>
             Game Mode:
             <br>
-            &emsp;&emsp;Survival mode: Last player still alive wins
+            &emsp;&emsp;Survival mode:<br>
+            &emsp;&emsp;&emsp;Last player still alive wins.
             <br>
-            &emsp;&emsp;Capture the flag: First player get to the flag wins
+            &emsp;&emsp;Capture the flag:<br>
+            &emsp;&emsp;&emsp;First player get to the flag wins.<br>
+            &emsp;&emsp;&emsp;Players can move back to previous positions.
             <br>
-            &emsp;&emsp;Mark the land: Player with the biggest area marked wins            
+            &emsp;&emsp;Mark the land:<br>
+            &emsp;&emsp;&emsp;Player with the biggest area marked wins. No attack.
         </div>
         <div class="pause_msg" id="pause_msg" hidden>
             Pause
