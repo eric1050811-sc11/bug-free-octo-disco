@@ -48,16 +48,12 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
 * The color of the blocks have been traveled becomes the color of the player.
 * If the player dies, the color of the block the player is currently on becomes black and no one can step on it.
 * If the player has 100% attack guarantee, the border of the player becomes white and bolder.
-
-| |  | |
-| - | :-: | - |
-
 * The action log can track what happened on the grid.
 * Big count down clock, also indicated which player's round.
 
-| <img src="img/07.png" width="80%"> | <img src="img/06.png" width="30%"> |
-| :-: | :-: |
-| promised player | action log, control buttons and count down clock |
+| <img src="img/07.png" width="100%" > | <img src="img/06.png" width="30%" height="30%"> |
+| :----: | :----: |
+| promised player | action log, control buttons <br> and count down clock |
 
 * Players can use buttons to control movement and attack, or they can just click on the block they want to move to.
 
