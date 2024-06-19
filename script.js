@@ -689,6 +689,7 @@ $(document).ready(function() {
         // get and set the value
         let numPlayerValue = $(this).attr('id');
         $("#num_of_player").val(Number(numPlayerValue));
+        play_audio_move();
     });
 
     // game mode select
@@ -698,10 +699,12 @@ $(document).ready(function() {
         $(this).addClass("btn_active");
         // set the mode
         game_mode = $(this).attr('id');
+        play_audio_move();
     });
 
     // wait input and start
     $("#start").click(function() {
+        play_audio_move();
         game_start();
     });
 });

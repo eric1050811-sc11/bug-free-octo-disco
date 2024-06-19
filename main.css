@@ -89,7 +89,7 @@ div.init_input {
     position: fixed;
     width: 30%;
     height: 30%;
-    bottom: 50%;
+    bottom: 55%;
     right: 35%; 
     padding: 1em;
     text-align: center;
@@ -122,8 +122,8 @@ div.init_msg, div.game_over_msg, div.pause_msg {
 div.init_msg {
     position: fixed;
     width: 50%;
-    height: 30%;
-    bottom: 10%;
+    height: 45%;
+    bottom: 5%;
     right: 25%; 
     padding: 1em;
     overflow: auto;

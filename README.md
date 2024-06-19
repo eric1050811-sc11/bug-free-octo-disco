@@ -27,7 +27,7 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
   * Even if the player can't move, he can still attack if any enemy stands on his cross.
 * Cap Flag
   * First player to reach the flag wins.
-  * **Players can travel back to previous position.**
+  * Players **can** travel back to previous position.
   * Players can still attack each other to fight for the flag.
 * Area
   * When no one can move, players with the maximum area win.
@@ -49,11 +49,26 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
 * If the player dies, the color of the block the player is currently on becomes black and no one can step on it.
 * If the player has 100% attack guarantee, the border of the player becomes white and bolder.
 * The action log can track what happened on the grid.
-* Big count down clock, also indicated which player's round.
+* Big count down clock, also indicated which player's round by its color.
 
-| <img src="img/07.png" width="100%" > | <img src="img/06.png" width="30%" height="30%"> |
-| :----: | :----: |
-| promised player | action log, control buttons <br> and count down clock |
+<table>
+    <tr>
+        <td style="width: 50%; text-align: center;">
+            <img src="img/07.png" width="50%">
+        </td>
+        <td style="width: 50%; text-align: center;">
+            <img src="img/06.png" width="40%" height="40%">
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+        promised player
+        </td>
+        <td style="text-align: center;">
+        action log, control buttons <br> and count down clock
+        </td>
+    </tr>
+</table>
 
 * Players can use buttons to control movement and attack, or they can just click on the block they want to move to.
 
@@ -71,11 +86,17 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
   * System: Ubuntu on WSL2
   * Text Editor: VSCode
   * Execution: Live Server plugin on VSCode with Chrome
-  * **Will be deploy on the Github Pages**
+  * **Deployed on the Github Pages** (checkout the online demo link on the top)
+  * [More about Github Pages](https://pages.github.com/)
+
+### Run this game
+
+* [Online demo link](https://eric1050811-sc11.github.io/bug-free-octo-disco/) (Github Pages)
+* Or just clone this repository and run locally.
 
 ## Code explanation
 
-### Topology
+### Structure
 
 ``` java
 // define constants and initialize variables
@@ -112,9 +133,7 @@ $(document).ready()
     └── $("#restart").click(...);
 ```
 
-Code inside `script.js` is comment carefully. If you need more detailed explanation, check out `script.js`.  
-
-Here I list the two most important function: `a_round()` and `next_round()`  
+Code inside `script.js` is comment carefully. If you need more detailed explanation, check out `script.js`. Here I list the two most important function: `a_round()` and `next_round()`  
 
 ```java
 function a_round(player_id) {
@@ -207,7 +226,7 @@ function next_round() {
 }
 ```
 
-These two functions are the core of the whole board game. They check:  
+These two functions are the core of the whole board game. They check/do:  
 
 1. if game can go on or not
 2. a 5 sec round for each player
@@ -217,8 +236,6 @@ These two functions are the core of the whole board game. They check:
    * player movement and attack
    * update status of the player
    * timer update
-
-Due to these two functions, the whole game can work.
 
 ## More ideas
 
@@ -241,7 +258,7 @@ Due to these two functions, the whole game can work.
 
 ## Thought of this Project
 
-我覺得這個 final project 蠻有趣的，從零開始設計遊戲，完程設計之後的 Coding 也蠻有挑戰性的，還有設計前端真的是一大挑戰(對我沒有設計感的人來說)。
+我覺得這個 final project 蠻有趣的，從零開始設計遊戲，完程設計之後的 Coding 也蠻有挑戰性的，還有設計前端真的是一大挑戰(對我沒有設計感的人來說)。從完成基本架構，再慢慢加入其他功能，code 的結構很重要，不然後面加入其他function時會搞瘋自己。遇到最複雜的應該就是`setInterval()`的兩個 functions，需要同時考慮重複執行跟判斷條件，然後還要記得`clearInterval()`，不然時間就會瘋狂亂跳。
 
 ## Credits
 
