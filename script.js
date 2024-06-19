@@ -10,6 +10,7 @@ let player_num = 0;
 let game_mode = "survive";
 let out_player = [];
 let round = 1;
+let total_round = 1;
 let sec = 5;
 let mainInterval;
 let timerInterval;
@@ -95,7 +96,7 @@ function draw_player(x, y, player_id) {
 
     // change player's color
     playerDiv.css("background-color", COLOR[player_id]);
-    // if promised, border bolder
+    // if promised, border bolder and white
     if (promised[player_id]) {
         playerDiv.css({
             "width": "3.5vh",
@@ -110,7 +111,7 @@ function draw_player(x, y, player_id) {
 }
 
 function draw_flag(x, y) {
-    $("#block_" + y + "_" + x).html(""); // clear &emsp;
+    $("#block_" + y + "_" + x).html(""); // clear &emsp; first
     $("#block_" + y + "_" + x).html("<img src=\"img/flag.png\" id=\"flag\" style=\"width:4vh;height:4vh;\">");
     $("#flag").hide();
 }
@@ -172,25 +173,25 @@ function move_player(x, y, nx, ny, player_id) {
     draw_player(nx, ny, player_id);
     $("#player" + player_id).hide();
     $("#player" + player_id).fadeIn(300);
+    //update grid
     grid[ny][nx] = player_id;
-
     // update player's position
     player_pos[player_id][0] = nx;
     player_pos[player_id][1] = ny;
-
     // calculate the player's area
     player_area[player_id]++;
 
+    // disable control and wait for next round
     disable_controls();
     setTimeout(next_round, 100);
-
+    // update action log
     let msg = "Player " + player_id + " move from (" + x + ", " + y + ") to (" + nx + ", " + ny + ").<br>";
     update_action_log(msg);
-
     play_audio_move();
 }
 
 function disable_controls() {
+    // disable all controls and effect
     $(".ctrl").off('click').attr("disabled", true);
     $(".grid_block").off('click');
     $("div.indicator").remove();
@@ -203,7 +204,8 @@ function indicate(x, y) {
         $("#block_" + y + "_" + x).html("<div class=\"indicator\"></div>");
     }
     else {
-        // cap flag when can capture the flag the border will become gold
+        // cap flag mode 
+        // when can capture the flag, the border will become gold
         if (x == flag_pos[0] && y == flag_pos[1]) {
             $("#block_" + y + "_" + x).addClass("get_flag");
         }
@@ -220,40 +222,43 @@ function enable_controls(player_id) {
 
     // check which direction can move to
     let cnt = 0;
-    if ((yy - 1 >= 0) && grid[yy - 1][xx] == 0) {
+    if ((yy - 1 >= 0) && (grid[yy - 1][xx] == 0 || grid[yy - 1][xx] == 1000)) {
         cnt++;
+        // button
         $("#ctrl_up").attr("disabled", false);
         $("#ctrl_up").click(function() {move_player(xx, yy, xx, yy - 1, player_id)});
+        // mouse click
         $("#block_" + (yy - 1) + "_" + xx).click(function() {move_player(xx, yy, xx, yy - 1, player_id)});
+        // indicate possible moving direction
         indicate(xx, yy - 1);
     }
-    if ((yy + 1 < BOARD_SIZE) && grid[yy + 1][xx] == 0) {
+    if ((yy + 1 < BOARD_SIZE) && (grid[yy + 1][xx] == 0 || grid[yy + 1][xx] == 1000)) {
         cnt++;
         $("#ctrl_down").attr("disabled", false);
         $("#ctrl_down").click(function() {move_player(xx, yy, xx, yy + 1, player_id)});
         $("#block_" + (yy + 1) + "_" + xx).click(function() {move_player(xx, yy, xx, yy + 1, player_id)});
         indicate(xx, yy + 1);
     }
-    if ((xx - 1 >= 0) && grid[yy][xx - 1] == 0) {
+    if ((xx - 1 >= 0) && (grid[yy][xx - 1] == 0 || grid[yy][xx - 1] == 1000)) {
         cnt++;
         $("#ctrl_left").attr("disabled", false);
         $("#ctrl_left").click(function() {move_player(xx, yy, xx - 1, yy, player_id)});
         $("#block_" + yy + "_" + (xx - 1)).click(function() {move_player(xx, yy, xx - 1, yy, player_id)});
         indicate(xx - 1, yy);
     }
-    if ((xx + 1 < BOARD_SIZE) && grid[yy][xx + 1] == 0) {
+    if ((xx + 1 < BOARD_SIZE) && (grid[yy][xx + 1] == 0 || grid[yy][xx + 1] == 1000)) {
         cnt++;
         $("#ctrl_right").attr("disabled", false);
         $("#ctrl_right").click(function() {move_player(xx, yy, xx + 1, yy, player_id)});
         $("#block_" + yy + "_" + (xx + 1)).click(function() {move_player(xx, yy, xx + 1, yy, player_id)});
         indicate(xx + 1, yy);
     }
+
     // check if player can't move or not
     if (!cnt) {
         if (!cant_move.includes(player_id)) {
             cant_move.push(player_id)
         }
-        // console.log(player_id + "cant move");
     }
 
     // check if attack
@@ -297,25 +302,30 @@ function next_round() {
             return;
         }
     }
-    else {
+    else { // area
         if (game_status == 1000) {
             calculate_area();
             return;
         }
     }
 
-    // move to next player, exclude the player already dead
+    // move to next player, exclude the player already dead or can't move
     do {
         round++;
+        total_round++;
         if (round > player_num) {
             round = 1;
         }
     } while (out_player.includes(round));
 
+    disable_controls();
+    enable_controls(round);
+
     // reset timer
     sec = 5;
     $("#5sec_timer").html(sec);
     draw_timer(sec, COLOR[round]);
+
     // start a five second round
     a_round(round);
 }
@@ -332,8 +342,7 @@ function a_round(player_id) {
         let msg = "Player " + player_id + " can't make any move.<br>";
         update_action_log(msg);
 
-        if (enable_controls(player_id) && game_mode != "area") {
-            console.log("cant move but can attack");
+        if (enable_controls(player_id) && game_mode != "area") { // area no attack
             let msg = "But player " + player_id + " has a chance to attack.<br>";
             update_action_log(msg);
         }
@@ -345,9 +354,15 @@ function a_round(player_id) {
 
     // change the border color
     $("#main_game_area").css("border-color", COLOR[player_id]);
+
     // reset and enable control
     disable_controls();
     enable_controls(player_id);
+
+    // generate obstacle when total round > 20
+    if (total_round > 20) {
+        gen_obstacle();
+    }
 
     // main 5 second interval
     clearInterval(mainInterval);
@@ -358,12 +373,15 @@ function set_mainInterval(player_id) {
     // update timer
     $("#5sec_timer").html(sec);
     draw_timer(sec, COLOR[player_id]);
+
     // check if 5 second is up
     if (sec <= 0) {
-        next_round();
         let msg = "Player " + player_id + " 5 second timeout.<br>";
         update_action_log(msg);
+        play_audio_atk_fail();
+        next_round();
     }
+
     mainInterval = setInterval(function() {
         // update timer
         sec--;
@@ -371,15 +389,16 @@ function set_mainInterval(player_id) {
         draw_timer(sec, COLOR[player_id]);
         // check if 5 second is up
         if (sec <= 0) {
-            next_round();
             let msg = "Player " + player_id + " 5 second timeout.<br>";
             update_action_log(msg);
+            play_audio_atk_fail();
+            next_round();
         }
     }, 1000);
 }
 
 function attack(player_id, online_ene) {
-    // random number generate
+    // generate a random number 
     let num = Math.random();
     // check if promised or can attack
     if (promised[player_id] == 1 || num >= ATK_prob) {
@@ -388,8 +407,8 @@ function attack(player_id, online_ene) {
             let x = player_pos[a_ene][0];
             let y = player_pos[a_ene][1];
             erase_player(x, y);
-            grid[y][x] = -1;
-            $("#block_" + y + "_" + x).css("background-color", "black");
+            grid[y][x] = -1; // mark as died
+            $("#block_" + y + "_" + x).css("background-color", "black"); // block becomes black
             out_player.push(a_ene);
             play_audio_atk();
         }
@@ -417,24 +436,26 @@ function attack(player_id, online_ene) {
         play_audio_atk_fail();
     }
 
+    // disable control after attack and move to next round
     disable_controls();
     setTimeout(next_round, 500);
 }
 
 function gen_flag() {
-    // generate flag at the middle of the board
+    // generate flag at the middle 4x4 of the grid
     x = Math.floor(Math.random() * 2);
     y = Math.floor(Math.random() * 2);
     draw_flag(BOARD_SIZE / 2 - 1 + x, BOARD_SIZE / 2 - 1 + y);
+
     // update board position
     flag_pos[0] = BOARD_SIZE / 2 - 1 + x;
     flag_pos[1] = BOARD_SIZE / 2 - 1 + y;
+    grid[flag_pos[1]][flag_pos[0]] = 1000; // mark as flag
 }
 
 function game_start() {
     // get player number and create player
     player_num = get_num_of_player();
-    console.log(game_mode);
     $("#init_input").fadeOut(500);
     $("#init_msg").fadeOut(500);
     $("#fog").fadeOut(500);
@@ -449,10 +470,11 @@ function game_start() {
 
     // timer initialize
     round = 1;
+    total_round = 1;
     sec = 5;
     draw_timer(sec, COLOR[round], true);
 
-    console.log(game_mode);
+    // generate flag only mode == cap flag
     if (game_mode == "cap flag") {
         gen_flag();
         $("#flag").fadeIn(500);
@@ -472,17 +494,22 @@ function game_start() {
 
     // pause the game
     $("#pause").click(function() {
+        // change button status
         $(this).addClass("btn_active");
+        // pause message animation
         $("#pause_msg").fadeIn(500);
         $("#fog").fadeIn(500);
+        // button enable
         $("#resume").attr("disabled", false);
         $("#restart").attr("disabled", false);
+        // clear the interval
         clearInterval(mainInterval);
         clearInterval(timerInterval);
     });
 
     // mute the audio
     $("#mute").click(function() {
+        // change the button and muted status
         if ($(this).hasClass("btn_active")) {
             $(this).removeClass("btn_active");
             $("audio").prop("muted", false);
@@ -495,16 +522,20 @@ function game_start() {
 
     // resume from pause
     $("#resume").click(function() {
+        // disable button
         $("#resume").attr("disabled", true);
+        // message fade out
         $("#pause_msg").fadeOut(500);
         $("#fog").fadeOut(500);
         $("#pause").removeClass("btn_active");
-        $("#restart").attr("disabled", false);  
+        $("#restart").attr("disabled", true);
+        // continue the interval
         set_mainInterval(round);
     });
 
     // restart the game
     $("#restart").click(function() {
+        // reload the page
         location.reload();
     });
 }
@@ -513,22 +544,24 @@ function is_game_over(game_mode) {
     if (game_mode == "survive") {
         // check if one player still alive
         if (out_player.length == player_num - 1) return 1;
+        // or all the players can't move
         else if (cant_move.length == (player_num - out_player.length)) return 2;
     }
     else if (game_mode == "cap flag") {
+        // find the player on the flag position
         let winner;
         for (let i = 1; i <= player_num; i++) {
-            console.log(flag_pos);
             if (player_pos[i][0] == flag_pos[0] && player_pos[i][1] == flag_pos[1]) {
                 winner = i;
-                console.log(winner);
                 return winner * 100;
             }
         }
     }
     else if (game_mode == "area") {
+        // continue till no player can move
         if (cant_move.length == (player_num - out_player.length)) return 1000;
     }
+    // else continue the game
     return 0;
 }
 
@@ -545,20 +578,20 @@ function declare_winner(winner) {
 
     let msg = "Player" + winner + " wins the game.";
     update_action_log(msg);
-    console.log("Game Over! Player " + winner + " wins!");
 
+    // show game over message
     let btn_str = "<br><button id=\"play_again\">Play Again</button>"
     $("#game_over_msg").html(msg + btn_str);
     $("#fog").fadeIn(500);
     $("#game_over_msg").fadeIn(500);
+    play_audio_win();
 
+    // clear the intervals
     clearInterval(mainInterval);
     clearInterval(timerInterval);
 
+    // enable play again button
     $("#play_again").attr("disable", false);
-    
-    play_audio_win();
-
     $("#play_again").click(function() {
         location.reload();
     });
@@ -568,18 +601,19 @@ function no_one_can_move() {
     let msg = "No one can move anymore, game over.";
     update_action_log(msg);
 
-    console.log("No one can move anymore, game over.");
+    // show game over message
     let btn_str = "<br><button id=\"play_again\">Play Again</button>"
-
     $("#game_over_msg").html(msg + btn_str);
     $("#fog").fadeIn(500);
     $("#game_over_msg").fadeIn(500);
 
+    // clear the intervals
     clearInterval(mainInterval);
     clearInterval(timerInterval);
-    $("#play_again").attr("disable", false);
-    play_audio_gameover();
+    play_audio_game_over();
 
+    // enable play again button
+    $("#play_again").attr("disable", false);
     $("#play_again").click(function() {
         location.reload();
     });
@@ -588,45 +622,48 @@ function no_one_can_move() {
 function calculate_area() {
     let msg = "No one can move anymore. Calculate the area.<br>";
 
-    // find the player with most area
-    console.log(player_area);
+    // find the player with maximum area
     let max_area = Number(Math.max(...player_area));
-    console.log(max_area);
     let winner = [];
     for (let i = 1; i <= player_num; i++) {
         if (player_area[i] == max_area) {
-            winner.push(i);
+            winner.push(i); // for the case multiple players have same maximum area
         }
     }
-    // console.log(winner);
 
     msg += "Player" + winner + " has max area " + max_area + "!<br>";
     update_action_log(msg);
-    let btn_str = "<br><button id=\"play_again\">Play Again</button>"
 
+    // show game over message
+    let btn_str = "<br><button id=\"play_again\">Play Again</button>";
     $("#game_over_msg").html(msg + btn_str);
     $("#fog").fadeIn(500);
     $("#game_over_msg").fadeIn(500);
-
-    clearInterval(mainInterval);
-    clearInterval(timerInterval);
-    $("#play_again").attr("disable", false);
     play_audio_win();
 
+    // clear the intervals
+    clearInterval(mainInterval);
+    clearInterval(timerInterval);
+
+    // enable play again button
+    $("#play_again").attr("disable", false);
     $("#play_again").click(function() {
         location.reload();
     });
 }
 
 function update_action_log(str) {
+    // add message to the end of action log
     let old_str = $("#action_log").html();
     $("#action_log").html(old_str + str);
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
     // draw
     draw_main_game_area();
     draw_control_area();
+
+    // initial message animation
     $("#init_input").fadeIn(500);
     $("#init_msg").fadeIn(500);
     $("#fog").fadeIn(500);
@@ -646,18 +683,21 @@ $(document).ready(function(){
 
     // # player select
     $(".num_player").click(function() {
+        // update button status
         $(".num_player").not(this).removeClass("btn_active");
         $(this).addClass("btn_active");
+        // get and set the value
         let numPlayerValue = $(this).attr('id');
         $("#num_of_player").val(Number(numPlayerValue));
     });
 
     // game mode select
     $(".game_mode").click(function() {
+        // update button status
         $(".game_mode").not(this).removeClass("btn_active");
         $(this).addClass("btn_active");
+        // set the mode
         game_mode = $(this).attr('id');
-        console.log(game_mode);
     });
 
     // wait input and start
@@ -668,17 +708,22 @@ $(document).ready(function(){
 
 function draw_timer(sec, color, stall = false) {
     sec = Number(sec);
+    // clear previous interval
     clearInterval(timerInterval);
+    // no interval (for game start delay)
     if (stall) {
         let canvas = document.getElementById("5_sec_timer");
-        let ctx = canvas.getContext("2d"); 
+        let ctx = canvas.getContext("2d");
+        // clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // draw the pie
         ctx.beginPath();
         ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height * 0.4 - 5, Math.PI * 1.5, 2 * Math.PI / 5 * sec + Math.PI * 1.5);
         ctx.lineTo(canvas.width / 2, canvas.height / 2);
         ctx.closePath();
         ctx.fillStyle = color;
         ctx.fill();
+        // add text
         ctx.font = "bold 20px Arial";
         let rs = Math.round(sec * 10) / 10;
         if ((rs * 10) % 10 == 0) rs += ".0"
@@ -688,6 +733,7 @@ function draw_timer(sec, color, stall = false) {
         return;
     }
     play_audio_clock();
+    // update the timer animation every 0.2 second
     timerInterval = setInterval(function() {
         let canvas = document.getElementById("5_sec_timer");
         let ctx = canvas.getContext("2d"); 
@@ -738,14 +784,37 @@ function play_audio_win() {
     audio_win.play();
 }
 
-function play_audio_gameover() {
-    let audio_gameover = document.getElementById("audio_gameover");
-    audio_gameover.currentTime = 0;
-    audio_gameover.play();
+function play_audio_game_over() {
+    let audio_game_over = document.getElementById("audio_game_over");
+    audio_game_over.currentTime = 0;
+    audio_game_over.play();
 }
 
 function play_audio_go() {
     let audio_go = document.getElementById("audio_go");
     audio_go.currentTime = 0;
     audio_go.play();
+}
+
+function gen_obstacle() {
+    let cnt = 0;
+    while (true) {
+        x = Math.floor(Math.random() * BOARD_SIZE);
+        y = Math.floor(Math.random() * BOARD_SIZE);
+        // make sure the block is empty
+        if (grid[y][x] != 0) {
+            cnt++;
+            continue;
+        }
+        // avoid infinite loop
+        if (cnt > 20) {
+            break;
+        }
+        // mark as obstacle, and update to grid
+        grid[y][x] = -1;
+        $("#block_" + y + "_" + x).css("background-color", "black");
+        let msg = "Generate a obstacle at (" + y + ", " + x + ").<br>";
+        update_action_log(msg);
+        break;
+    }
 }

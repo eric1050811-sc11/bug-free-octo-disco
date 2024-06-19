@@ -7,11 +7,6 @@ body {
     font-size: normal;
 }
 
-button {
-    font-family: "Source Code Pro";
-    font-weight: 600;
-}
-
 h1 {
     text-align: center;
     margin: 3vh auto;
@@ -24,16 +19,16 @@ div.flex_horizontal_container {
     align-items: stretch;
 }
 
-div.spacer {
-    flex: auto;
-}
-
 div.flex_vertical_container {
     display: flex;
     flex: auto;
     flex-direction: column;
     justify-content: space-around;
     align-items: stretch;
+}
+
+div.spacer {
+    flex: auto;
 }
 
 div#fog {
@@ -125,7 +120,14 @@ div.init_msg, div.game_over_msg, div.pause_msg {
 }
 
 div.init_msg {
+    position: fixed;
+    width: 50%;
+    height: 30%;
+    bottom: 10%;
+    right: 25%; 
+    padding: 1em;
     overflow: auto;
+    font-size: medium;
 }
 
 div.pause_msg {
@@ -165,6 +167,11 @@ td.ctrl_block {
 
 div.control_area > *:first-child {
     margin: 1em auto;
+}
+
+button {
+    font-family: "Source Code Pro";
+    font-weight: 600;
 }
 
 button.ctrl {
@@ -221,8 +228,6 @@ table#init_input_table {
     width: 90%;
     height: 60%;
     margin: 0 auto;
-    /* border-style: solid;
-    border-width: 5px; */
     border-collapse: separate;
     table-layout: fixed;
 }
