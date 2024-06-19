@@ -133,7 +133,7 @@ $(document).ready()
     └── $("#restart").click(...);
 ```
 
-Code inside `script.js` is comment carefully. If you need more detailed explanation, check out `script.js`. Here I list the two most important function: `a_round()` and `next_round()`  
+Code inside `script.js` is commented carefully. If you need more detailed explanation, check out `script.js`. Here I list the two most important function: `a_round()` and `next_round()`  
 
 ```java
 function a_round(player_id) {
@@ -258,7 +258,7 @@ These two functions are the core of the whole board game. They check/do:
 
 ## Thought of this Project
 
-我覺得這個 final project 蠻有趣的，從零開始設計遊戲，完程設計之後的 Coding 也蠻有挑戰性的，還有設計前端真的是一大挑戰(對我沒有設計感的人來說)。從完成基本架構，再慢慢加入其他功能，code 的結構很重要，不然後面加入其他function時會搞瘋自己。遇到最複雜的應該就是`setInterval()`的兩個 functions，需要同時考慮重複執行跟判斷條件，然後還要記得`clearInterval()`，不然時間就會瘋狂亂跳。
+我覺得這個 final project 蠻有趣的，從零開始設計遊戲，完程設計之後的 Coding 也蠻有挑戰性的，還有設計前端真的是一大挑戰(對我沒有設計感的人來說)。從完成基本架構，再慢慢加入其他功能，code 的結構很重要，不然後面加入其他 function 時會搞瘋自己。遇到最複雜的應該就是`setInterval()`的兩個 functions，需要同時考慮重複執行跟判斷條件，然後還要記得`clearInterval()`，不然時間就會瘋狂亂跳。
 
 ## Credits
 
