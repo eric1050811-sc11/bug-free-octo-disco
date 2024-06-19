@@ -42,7 +42,7 @@ Here is the [online demo link](https://eric1050811-sc11.github.io/bug-free-octo-
 | :----: | :----: | :----: |
 | start menu | pause menu | game over |
 
-* Smooth animation on start. pause and game over.
+* Smooth animation on start, pause and game over.
 * Player movement animation.
 * The border of the game board indicates which player's round it is.
 * The color of the blocks have been traveled becomes the color of the player.
